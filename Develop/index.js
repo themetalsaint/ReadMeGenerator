@@ -2,6 +2,11 @@
 
 const inquirer = require('inquirer');
 const fs = require('fs');
+const path = require('path');
+const generateMarkdown = require('./utils/generateMarkdown');
+
+// const util = require('util');
+
 
 // TODO: Create an array of questions for user input
 const questions = [
@@ -20,7 +25,7 @@ const questions = [
         type: 'input',
         message: "What is the name of your GitHub repo?",
         name: 'repo',
-        default: 'readme-generator',
+        default: 'ReadMeGenerator',
         validate: function (answer) {
             if (answer.length < 1) {
                 return console.log("Please include a valid Github repo name.");
@@ -73,16 +78,26 @@ const questions = [
     {
         type: 'list',
         message: "Choose a license for your project.",
-        choices: ['MIT License', 'Mozilla Public License','The Unlicense', 'Apache License', 'Boost Software License' ],
+        choices: ['MIT','Apache 2.0', 'None' ],
         name: 'license'
     }
 ];
 
+
+
 // TODO: Create a function to write README file
-function writeToFile(fileName, data) {}
 
-// TODO: Create a function to initialize app
-function init() {}
+function writeToFile(fileName, data) {
+    return fs.writeFileSync(path.join(process.cwd(), fileName), data);
+}
 
-// Function call to initialize app
+
+// Main function
+function init() {
+    inquirer.prompt(questions).then(userResponses => {
+        writeToFile("README.md", generateMarkdown({...userResponses}));
+        console.log("Success!")
+    });
+};
+
 init();
